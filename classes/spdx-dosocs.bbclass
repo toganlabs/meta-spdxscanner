@@ -10,7 +10,7 @@
 #
 # Note:
 # 1) Make sure DoSOCSv2 has beed installed in your host
-# 2) By default,spdx files will be output to the path which is defined as[SPDX_DEPLOY_DIR] 
+# 2) By default,spdx files will be output to the path which is defined as[SPDX_DEPLOY_DIR]
 #    in ./meta/conf/spdx-dosocs.conf.
 
 SPDXOUTPUTDIR = "${WORKDIR}/spdx_output_dir"
@@ -26,14 +26,14 @@ python do_spdx () {
     import json
 
     ## It's no necessary  to get spdx files for *-native
-    if d.getVar('PN', True) == d.getVar('BPN', True) + "-native": 
+    if d.getVar('PN', True) == d.getVar('BPN', True) + "-native":
         return None
 
     ## gcc is too big to get spdx file.
     if 'gcc' in d.getVar('PN', True):
-        return None 
+        return None
     
-    info = {} 
+    info = {}
     info['workdir'] = (d.getVar('WORKDIR', True) or "")
     info['pn'] = (d.getVar( 'PN', True ) or "")
     info['pv'] = (d.getVar( 'PV', True ) or "")
@@ -53,10 +53,10 @@ python do_spdx () {
     spdx_sstate_dir = (d.getVar('SPDXSSTATEDIR', True) or "")
     manifest_dir = (d.getVar('SPDX_DEPLOY_DIR', True) or "")
     info['outfile'] = os.path.join(manifest_dir, info['pn'] + "-" + info['pv'] + ".spdx" )
-    sstatefile = os.path.join(spdx_sstate_dir, 
+    sstatefile = os.path.join(spdx_sstate_dir,
         info['pn'] + "-" + info['pv'] + ".spdx" )
 
-    ## get everything from cache.  use it to decide if 
+    ## get everything from cache. Use it to decide if
     ## something needs to be rerun
     if not os.path.exists( spdx_sstate_dir ):
         bb.utils.mkdirhier( spdx_sstate_dir )
@@ -181,8 +181,8 @@ def write_cached_spdx( info,sstatefile, ver_code ):
         return dest_sed_cmd
 
     ## Document level information
-    sed_cmd = r"sed -i -e 's#\r$##g' " 
-    spdx_DocumentComment = "<text>SPDX for " + info['pn'] + " version " \ 
+    sed_cmd = r"sed -i -e 's#\r$##g' "
+    spdx_DocumentComment = "<text>SPDX for " + info['pn'] + " version " \
         + info['pv'] + "</text>"
     sed_cmd = sed_replace(sed_cmd,"DocumentComment",spdx_DocumentComment)
     
@@ -196,7 +196,7 @@ def write_cached_spdx( info,sstatefile, ver_code ):
     sed_cmd = sed_insert(sed_cmd,"PackageChecksum: ","PackageHomePage: " + info['package_homepage'])
     sed_cmd = sed_replace(sed_cmd,"PackageSummary: ","<text>" + info['package_summary'] + "</text>")
     sed_cmd = sed_replace(sed_cmd,"PackageVerificationCode: ",ver_code)
-    sed_cmd = sed_replace(sed_cmd,"PackageDescription: ", 
+    sed_cmd = sed_replace(sed_cmd,"PackageDescription: ",
         "<text>" + info['pn'] + " version " + info['pv'] + "</text>")
     sed_cmd = sed_cmd + sstatefile
 
