@@ -106,6 +106,10 @@ python do_get_spdx_s() {
     if 'gcc' in d.getVar('PN', True):
         return None
 
+    ## skip if we're using external src.
+    if d.getVar('EXTERNALSRC', True):
+        return None
+
     ## Change the WORKDIR to make do_unpack do_patch run in another dir.
     d.setVar('WORKDIR', d.getVar('SPDX_TEMP_DIR', True))
     ## The changed 'WORKDIR' also casued 'B' changed, create dir 'B' for the
